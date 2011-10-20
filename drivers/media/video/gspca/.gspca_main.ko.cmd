@@ -1,0 +1,1 @@
+cmd_drivers/media/video/gspca/gspca_main.ko := /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /media/Workspace/kernels/linux_mt-msm8655-froyo/scripts/module-common.lds --build-id -o drivers/media/video/gspca/gspca_main.ko drivers/media/video/gspca/gspca_main.o drivers/media/video/gspca/gspca_main.mod.o

@@ -1,0 +1,184 @@
+# Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of Code Aurora nor
+#       the names of its contributors may be used to endorse or promote
+#       products derived from this software without specific prior written
+#       permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+on boot-pause
+    exec system/bin/battery_charging
+
+on boot
+    #Create directories for wiper services
+    mkdir /data/wpstiles/ 0777 shell
+    mkdir /etc/wiper 0777 location qcom_oncrpc
+
+    #Create directories for gpsone_daemon services
+    mkdir /data/gpsone_d 0770 gpsone_d qcom_oncrpc
+    mkdir /etc/gpsone_d 0770 gpsone_d qcom_oncrpc
+
+    #Set SUID bit for usbhub
+    chmod 4755 /system/bin/usbhub
+    chmod 755 /system/bin/usbhub_init
+
+    #Set SUID bit for diag_mdlog
+    chmod 4755 /system/bin/diag_mdlog
+
+    #//FXPCAYM-257: Start - Remove root from post-boot
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/ondemand/up_threshold
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/ondemand/sampling_rate
+    #//FXPCAYM-257: End
+
+# Export GPIO56 for fusion targets to enable/disable hub
+service usbhub_init /system/bin/usbhub_init
+    user root
+    disabled
+    oneshot
+
+on property:ro.product.device=msm7630_fusion
+    start usbhub_init
+
+service cnd /system/bin/cnd
+    socket cnd stream 660 root radio
+
+#Div2D5-LC-BSP-Modify_SF5_EFS_Partition-00 *[
+on NormalPartition    
+    #Div2-SW2-BSP,JOE HSU,change EFS partition
+    #service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p10 /dev/block/mmcblk0p11
+    service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p14 /dev/block/mmcblk0p15
+        user root
+        disabled
+
+on SF5Partition4G
+    mkdir /internalSD 0777 system system
+    devwait /dev/block/mmcblk0p12
+    mount vfat /dev/block/mmcblk0p12 /internalSD nosuid nodev
+    
+    mkdir /misc2 0777 system system
+    devwait /dev/block/mmcblk0p13
+    mount ext3 /dev/block/mmcblk0p13 /misc2 nosuid nodev
+
+    service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p16 /dev/block/mmcblk0p17
+        user root
+        disabled       
+#Div2D5-LC-BSP-Modify_SF5_EFS_Partition-00 *]
+
+on property:ro.emmc=1
+    start rmt_storage
+
+service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0
+
+#//FXPCAYM-257: Start - Remove qmuxd from root process
+service qmuxd /system/bin/qmuxd
+  user radio
+  group radio
+#//FXPCAYM-257: End
+
+
+service netmgrd /system/bin/netmgrd
+
+on property:ro.use_data_netmgrd=false
+    # netmgr not supported on specific target
+    stop netmgrd
+
+service wiperiface /system/bin/wiperiface
+    user location
+    group qcom_oncrpc
+    oneshot
+
+service gpsone_daemon /system/bin/gpsone_daemon
+    user root
+    group qcom_oncrpc
+    disabled
+
+service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
+    user system
+    group system qcom_oncrpc
+    disabled
+    oneshot
+
+service qcom-sh /system/bin/sh /init.qcom.sh
+    user root
+    oneshot
+
+#//FXPCAYM-257: Start - Remove root privilege
+service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
+    user system
+    group system
+    disabled
+    oneshot
+#//FXPCAYM-257: End
+
+on property:init.svc.bootanim=stopped
+    start qcom-post-boot
+#Div2-SW2-BSP,JOE HSU    
+#    start qcom-wifi
+#Div6-D1-JL-UsbPorting-00+[
+    losetup /dev/block/loop1 /hidden/custom.iso
+    write /sys/devices/platform/usb_mass_storage/lun1/file /dev/block/loop1
+#Div6-D1-JL-UsbPorting-00+]
+
+### FB0 2030 porting : Disable to run CKPD-daemon in init.qcom.rc
+#service ckpd /system/bin/CKPD-daemon
+#    disabled
+#    onrestart /system/bin/log -t RIL-CKPD -p w "CKPD daemon restarted"
+
+on property:ro.service.ckpd.enable=1
+    start ckpd
+
+service hdmid /system/bin/hdmid
+    socket hdmid stream 0660 root system graphics
+    disabled
+
+on property:ro.hdmi.enable=true
+    start hdmid
+
+service ds_fmc_appd /system/bin/ds_fmc_appd -p "rmnet0" -D
+    group radio
+    disabled
+    oneshot
+
+on property:persist.data.ds_fmc_app.mode=1
+    start ds_fmc_appd
+
+service ims_regmanager /system/bin/exe-ims-regmanagerprocessnative
+    user system
+    group qcom_oncrpc net_bt_admin inet radio wifi
+    disabled
+
+on property:persist.ims.regmanager.mode=1
+    start ims_regmanager
+
+on property:ro.data.large_tcp_window_size=true
+    # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
+    write /proc/sys/net/ipv4/tcp_adv_win_scale  1
+
+service thermald /system/bin/thermald
+    user root
+    group root
+    disabled
+
+on property:persist.thermal.monitor=true
+    start thermald

@@ -1,0 +1,1 @@
+cmd_drivers/input/touchscreen/built-in.o :=  /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/input/touchscreen/built-in.o drivers/input/touchscreen/bu21018mwv.o drivers/input/touchscreen/bi041p_ts.o 

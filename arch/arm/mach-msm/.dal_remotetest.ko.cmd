@@ -1,0 +1,1 @@
+cmd_arch/arm/mach-msm/dal_remotetest.ko := /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /media/Workspace/kernels/linux_mt-msm8655-froyo/scripts/module-common.lds --build-id -o arch/arm/mach-msm/dal_remotetest.ko arch/arm/mach-msm/dal_remotetest.o arch/arm/mach-msm/dal_remotetest.mod.o

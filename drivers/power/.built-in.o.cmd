@@ -1,0 +1,1 @@
+cmd_drivers/power/built-in.o :=  /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/power/built-in.o drivers/power/power_supply.o drivers/power/fih_ds2784_battery.o drivers/power/fih_msm_battery.o drivers/power/bq275x0_battery.o drivers/power/bq275x0_RomMode.o 

@@ -1,1 +1,0 @@
-cmd_drivers/misc/pmem_kernel_test.ko := /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /media/Workspace/kernels/linux_mt-msm8655-froyo/scripts/module-common.lds --build-id -o drivers/misc/pmem_kernel_test.ko drivers/misc/pmem_kernel_test.o drivers/misc/pmem_kernel_test.mod.o

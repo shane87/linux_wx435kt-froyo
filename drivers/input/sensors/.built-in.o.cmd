@@ -1,1 +1,0 @@
-cmd_drivers/input/sensors/built-in.o :=  /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/input/sensors/built-in.o drivers/input/sensors/yas529.o drivers/input/sensors/bma150.o drivers/input/sensors/orientation.o drivers/input/sensors/light.o drivers/input/sensors/proximity.o 

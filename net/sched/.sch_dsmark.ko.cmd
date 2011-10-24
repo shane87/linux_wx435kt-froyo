@@ -1,1 +1,0 @@
-cmd_net/sched/sch_dsmark.ko := /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /media/Workspace/kernels/linux_mt-msm8655-froyo/scripts/module-common.lds --build-id -o net/sched/sch_dsmark.ko net/sched/sch_dsmark.o net/sched/sch_dsmark.mod.o

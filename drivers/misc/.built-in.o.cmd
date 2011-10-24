@@ -1,1 +1,0 @@
-cmd_drivers/misc/built-in.o :=  /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/misc/built-in.o drivers/misc/pmem.o drivers/misc/uid_stat.o drivers/misc/eeprom/built-in.o drivers/misc/cb710/built-in.o drivers/misc/pmic8058-pwm.o drivers/misc/pmic8058-vibrator.o drivers/misc/pmic8058-nfc.o drivers/misc/pmic8058-upl.o drivers/misc/msm_migrate_pages.o 

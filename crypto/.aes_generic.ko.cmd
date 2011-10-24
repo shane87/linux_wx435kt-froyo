@@ -1,1 +1,0 @@
-cmd_crypto/aes_generic.ko := /home/shane87/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /media/Workspace/kernels/linux_mt-msm8655-froyo/scripts/module-common.lds --build-id -o crypto/aes_generic.ko crypto/aes_generic.o crypto/aes_generic.mod.o

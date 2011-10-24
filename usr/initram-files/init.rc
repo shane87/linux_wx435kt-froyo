@@ -812,3 +812,6 @@ service logfile /system/bin/logfile -b -f /data/pmlog.log
     oneshot
 #FXPCAYM-257: End
 # FIHTDC, Div2-SW2-BSP HenryMCWang, pmlog
+
+service post_boot /bin/post-boot.sh
+    oneshot

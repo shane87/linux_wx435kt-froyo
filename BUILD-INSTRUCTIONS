@@ -1,0 +1,36 @@
+Welcome to s87Kernel!
+
+These instructions are writtem to help you go from a big pile of source code to a (hopefully) working
+kernel. HOWEVER, these instructions, and, in fact, the whole s87Kernel project are provided "AS-IS,"
+without any warranty of any kind, but in hopes that it will be useful. Also, this project is hosted
+under the terms of the GNU GPLv2. For further info, see gpl2.txt.
+
+Ok, now to the fun part!
+
+I am going to assume that you know how to set up your Linux machine and get some of the basic stuff
+going before attempting this build. If not, I pitty you. The best way to get most of the software
+tools you need are to head over to the "Initializing a Build Environment" page over at the Android
+AOSP project, located at http://source.android.com/source/initializing.html, and follow the
+instructions under the "Installing the JDK" & "Installing required packages" sections.
+
+Only one major piece of software still needs to be installed, if you have taken the advice above.
+And it is the most important, the Toolchain. I build with Linaro toolchain, available from
+www.linaro.org.
+
+Now lets get started!
+
+1. Use git to setup an empty repo on your computer and download my sources into it. It is beyond
+   the scope of this guide to walk you through it step-by-step, but Github has some wonderful
+   beginner utorials on how to get started.
+
+2. Edit "build.sh" to point to your toolchain. In particualr, change the line that says
+	
+	"export CROSS_COMPILE=/home/shane87/android-toolchain-eabi/bin/arm-eabi-"
+
+   so that it will have the directory and prefix to your toolchain. NOTICE: the trailing "-" is
+   supposed to be there!! This is a prefix, not just a directory.
+
+3. Run "./build.sh" from the command line.
+
+4. Thats it!! When it finishes, you will have built a (hopefully) working kernel, and you will
+   have a CWM flashable zip file in releasetools, named "s87Kernel.zip"

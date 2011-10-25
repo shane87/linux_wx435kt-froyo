@@ -10,9 +10,7 @@
 export ARCH=arm
 export KBUILD_BUILD_VERSION="s87Kernel-0.1-DEV"
 
-if ! [ -n $CROSS_COMPILE ]; then
- ./ccsetup.sh
-fi
+export CROSS_COMPILE=/home/shane87/android-toolchain-eabi/bin/arm-eabi-
 
 if ! [ -e .config ]; then
  make mt-msm8655-stock_defconfig
